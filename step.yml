@@ -1,0 +1,113 @@
+---
+title: |-
+  Send Google Chat message
+summary: |
+  Send a Google Chat message to a room.
+description: |
+  Send a Google Chat message to a room.
+
+  You have to register an **Incoming WebHook** for your room:
+    - Go to the room to which you want to add a bot.
+    - From the menu at the top of the page, select Configure webhooks.
+    - Under Incoming Webhooks, click ADD WEBHOOK.
+    - Name the new webhook and click SAVE.
+    - Copy the URL listed next to your new webhook in the Webhook Url column.
+
+  *Don't forget to enable this Step to **Always run** if
+  you want to get notified about failed builds as well!*
+website: https://github.com/Equiem/bitrise-step-send-google-chat-message
+source_code_url: https://github.com/Equiem/bitrise-step-send-google-chat-message
+support_url: https://github.com/Equiem/bitrise-step-send-google-chat-message/issues
+host_os_tags:
+  - osx-10.10
+  - ubuntu-16.04
+type_tags:
+  - notification
+
+is_requires_admin_user: false
+is_always_run: true
+is_skippable: true
+
+deps:
+  brew:
+  - name: go
+  apt_get:
+  - name: golang
+    bin_name: go
+
+toolkit:
+  go:
+    package_name: github.com/Equiem/bitrise-step-send-google-chat-message
+
+inputs:
+  - is_debug_mode: "no"
+    opts:
+      title: "Debug mode?"
+      description: |
+        Step prints additional debug information if this option
+        is enabled
+      value_options:
+      - "yes"
+      - "no"
+  - webhook_url:
+    opts:
+      title: "Google Chat Webhook URL"
+      is_required: true
+      is_sensitive: true
+  - app_title: ${BITRISE_APP_TITLE}
+    opts:
+      title: "App Title"
+      is_required: true
+      is_sensitive: true
+  - image_url:
+    opts:
+      title: "Image URL if build succeed"
+      description: "Image URL if build succeed"
+      is_required: true
+  - image_url_on_error:
+    opts:
+      title: "Image URL if build failed"
+      description: |
+        **This option will be used if the build failed.** If you
+        leave this option empty then the default one will be used.
+      category: If Build Failed
+  - title: "*Build Succeeded!*"
+    opts:
+      title: "An optional text that as the Title."
+      description: "An optional text that appears as the Title."
+  - title_on_error: "*Build Failed!*"
+    opts:
+      title: "An optional text that appears as the Title if the build failed"
+      description: |
+        **This option will be used if the build failed.** If you
+        leave this option empty then the default one will be used.
+      category: If Build Failed
+  - qr_image_url: $BITRISE_PUBLIC_INSTALL_PAGE_QR_CODE_IMAGE_URL
+    opts:
+      title: "URL for a QR code which points to the install page."
+      description: "URL for a QR code which points to the install page."
+  - fields: |
+      Branch|${BITRISE_GIT_BRANCH}
+      Workflow|${BITRISE_TRIGGERED_WORKFLOW_ID}
+    opts:
+      title: "A list of fields to be displayed"
+      description: |
+        Fields separated by newlines and each field contains a `title` and a `value`.
+        The `title` and the `value` fields are separated by a pipe `|` character.
+        Empty lines and lines without a separator are omitted.
+        
+        The *title* shown as a bold heading above the `value` text.
+        The *value* is the text value of the field.
+  - buttons: |
+      View App|${BITRISE_APP_URL}
+      View Build|${BITRISE_BUILD_URL}
+      Install Page|${BITRISE_PUBLIC_INSTALL_PAGE_URL}
+    opts:
+      title: "A list of buttons attached to the message as link buttons"
+      description: |
+        Buttons separated by newlines and each field contains a `text` and a `url`.
+        The `text` and the `url` fields are separated by a pipe `|` character.
+        Empty lines and lines without a separator are omitted.
+        
+        The *text* is the label for the button.
+        The *url* is the fully qualified http or https url to deliver users to.

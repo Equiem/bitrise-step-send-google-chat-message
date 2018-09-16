@@ -1,0 +1,50 @@
+format_version: 4
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+app:
+  envs:
+  # If you want to share this step into a StepLib
+  - BITRISE_STEP_ID: send-google-chat-message
+  - BITRISE_STEP_VERSION: "0.0.1"
+  - BITRISE_STEP_GIT_CLONE_URL: https://github.com/Equiem/bitrise-step-send-google-chat-message.git
+
+workflows:
+  test:
+    before_run:
+    - audit-this-step
+    steps:
+    - go-list:
+    - golint:
+    - errcheck:
+    - go-test:
+    - path::./:
+        title: On Success
+        is_skippable: false
+        inputs:
+        - webhook_url: $WEBHOOK_URL
+  fail-message-test:
+    steps:
+    - script:
+        title: Fail
+        inputs:
+        - content: exit 1
+    - path::./:
+        title: On Error
+        is_skippable: false
+        inputs:
+        - webhook_url: $WEBHOOK_URL
+  missing-webhook-url-test:
+    steps:
+    - path::./:
+        is_skippable: false
+
+  # ----------------------------------------------------------------
+  # --- workflows to Share this step into a Step Library
+  audit-this-step:
+    steps:
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+            set -ex
+            stepman audit --step-yml ./step.yml
