@@ -2,7 +2,7 @@ name: backup repo
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   back-up-repo:
     runs-on: ubuntu-latest
